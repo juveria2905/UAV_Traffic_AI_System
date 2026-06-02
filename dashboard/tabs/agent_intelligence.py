@@ -1,52 +1,32 @@
 """
-dashboard/tabs/live_feed.py
-Live annotated video frame + current collision alerts + active tracks.
+dashboard/tabs/agent_intelligence.py
+Agent hierarchy, communication graph, and confidence gauge.
 """
 
 import streamlit as st
-import base64
-from typing import Optional
-
-from dashboard.components import collision_alerts, track_viewer
+from dashboard.components import agent_hierarchy, communication_graph, confidence_gauge
 
 
 def render(snapshot: dict, api_base: str) -> None:
-    """Render the live feed tab."""
-    col_frame, col_info = st.columns([3, 2])
+    """Render the agent intelligence tab."""
+    st.subheader("Agent System Intelligence")
+    st.caption(
+        "Hierarchical agent decisions, inter-agent communication, "
+        "and confidence analysis."
+    )
 
-    with col_frame:
-        st.subheader("Live Frame")
-        # Prefer the base64 frame from the /api/frame endpoint
-        frame_b64: Optional[str] = None
+    # Three-column layout
+    col1, col2 = st.columns(2)
 
-        try:
-            import requests
-            resp = requests.get(f"{api_base}/api/frame", timeout=0.5)
-            if resp.ok:
-                data      = resp.json()
-                frame_b64 = data.get("image_b64")
-        except Exception:
-            pass
+    with col1:
+        st.subheader("Hierarchy")
+        agent_hierarchy.render(snapshot)
 
-        if frame_b64:
-            st.markdown(
-                f'<img src="{frame_b64}" style="width:100%;border-radius:6px"/>',
-                unsafe_allow_html=True,
-            )
-        else:
-            st.info("Waiting for first frame from pipeline…")
+    with col2:
+        st.subheader("Communication")
+        communication_graph.render(snapshot)
 
-        # System status bar
-        fps       = snapshot.get("fps", 0)
-        frame_idx = snapshot.get("frame_idx", 0)
-        is_run    = snapshot.get("is_running", False)
-        status_col = "🟢" if is_run else "🔴"
-        st.caption(f"{status_col} Frame: {frame_idx} | FPS: {fps:.1f}")
+    st.divider()
 
-    with col_info:
-        st.subheader("Collision Alerts")
-        collision_alerts.render(snapshot)
-
-        st.divider()
-        st.subheader("Active Tracks")
-        track_viewer.render(snapshot)
+    st.subheader("Decision Confidence")
+    confidence_gauge.render(snapshot)

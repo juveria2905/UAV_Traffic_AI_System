@@ -24,6 +24,11 @@ def render(snapshot: dict) -> None:
     """Render rolling performance charts."""
     fps          = snapshot.get("fps", 0.0)
     system_state = snapshot.get("system_state", {})
+
+    if not system_state:
+        st.info("System state not available yet.")
+        return
+
     latency_ms   = system_state.get("agent_latency_ms", 0.0)
     emergency    = system_state.get("emergency_stops", 0)
     reroutes     = system_state.get("reroutes", 0)

@@ -22,6 +22,15 @@ def _init_points() -> deque:
 def render(snapshot: dict, frame_w: int = 1280, frame_h: int = 720) -> None:
     """Accumulate track positions and render a 2-D heatmap."""
     tracks: List[dict] = snapshot.get("tracks", [])
+
+    if not tracks:
+        st.info("Waiting for track data…")
+        return
+
+    if not isinstance(tracks, list):
+        st.error("Invalid tracks format (expected list)")
+        return
+
     pts: deque         = _init_points()
 
     for t in tracks:

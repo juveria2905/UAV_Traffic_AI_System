@@ -25,6 +25,10 @@ def render(snapshot: dict) -> None:
     system_state: dict = snapshot.get("system_state", {})
     city_state:   dict = system_state.get("city_state", {})
 
+    if not city_state:
+        st.info("Hierarchy data not available (HierarchyManager may be disabled).")
+        return
+
     # ── Tier summary ──────────────────────────────────────────────────────────
     st.subheader("Agent Hierarchy")
 

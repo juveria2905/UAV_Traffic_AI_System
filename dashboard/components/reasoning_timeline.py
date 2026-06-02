@@ -112,14 +112,22 @@ def render(snapshot: dict) -> None:
         "Steps":    c.get("step_count", 0),
         "ms":       round(c.get("duration_ms", 0), 1),
     } for c in filtered]
+
+    if not rows:
+        st.info("No reasoning chains match the selected filters.")
+        return
+
     df = pd.DataFrame(rows)
 
     def _colour(val):
         color = DECISION_COLORS.get(val, "#888")
         return f"color: {color}; font-weight: bold;"
 
-    styled = df.style.applymap(_colour, subset=["Decision"])
-    st.dataframe(styled, use_container_width=True, hide_index=True)
+    if "Decision" in df.columns:
+        styled = df.style.map(_colour, subset=["Decision"])
+        st.dataframe(styled, use_container_width=True, hide_index=True)
+    else:
+        st.dataframe(df, use_container_width=True, hide_index=True)
 
     st.divider()
 

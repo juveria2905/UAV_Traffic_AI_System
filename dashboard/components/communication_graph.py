@@ -14,6 +14,12 @@ from typing import Dict
 def render(snapshot: dict) -> None:
     """Render message bus activity and topic distribution."""
     system_state = snapshot.get("system_state", {})
+
+    if not system_state:
+        st.info("System state not available.")
+        _render_agent_topology()
+        return
+
     # Message bus stats are embedded in system_state if the pipeline exposes them
     # They come from HierarchicalAgentSystem.get_message_bus_stats()
     # which returns AgentMessageBus.get_stats()

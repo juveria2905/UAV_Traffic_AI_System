@@ -20,6 +20,10 @@ def render(snapshot: dict, frame_w: int = 1280, frame_h: int = 720) -> None:
     """Render a scatter plot of collision hotspot positions."""
     events: List[dict] = snapshot.get("collision_events", [])
 
+    if not events:
+        st.info("No collision events to display.")
+        return
+
     system_state = snapshot.get("system_state", {})
     city_state   = system_state.get("city_state", {})
     grid_info    = city_state.get("grid_info", {})

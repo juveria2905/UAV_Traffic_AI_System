@@ -66,25 +66,19 @@ def render(snapshot: dict) -> None:
 
     df = pd.DataFrame(rows)
 
-    # Colour-code the Action column
+    # Colour-code the Action column (defensive check for empty DataFrame)
     def _style_action(val):
         color = DECISION_COLORS.get(val, "#888888")
         return f"color: {color}; font-weight: bold;"
 
-    # Use map() for pandas 2.1+, fall back to applymap() for older versions
-    try:
+    if not df.empty and "Action" in df.columns:
         styled = (
             df.style
             .map(_style_action, subset=["Action"])
             .format({"Speed": "{:.2f}", "Conf": "{:.2f}", "A.Conf": "{:.2f}"})
         )
-    except AttributeError:
-        # Fallback for older pandas versions
-        styled = (
-            df.style
-            .applymap(_style_action, subset=["Action"])
-            .format({"Speed": "{:.2f}", "Conf": "{:.2f}", "A.Conf": "{:.2f}"})
-        )
+    else:
+        styled = df.style.format({"Speed": "{:.2f}", "Conf": "{:.2f}", "A.Conf": "{:.2f}"})
 
     st.dataframe(styled, use_container_width=True, hide_index=True)
 

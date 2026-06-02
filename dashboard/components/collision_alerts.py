@@ -73,7 +73,11 @@ def render(snapshot: dict) -> None:
                 return f"color: {color}; font-weight: bold;"
         return ""
 
-    styled = df.style.applymap(_style_risk, subset=["Risk"])
+    if not df.empty and "Risk" in df.columns:
+        styled = df.style.map(_style_risk, subset=["Risk"])
+    else:
+        styled = df.style
+
     st.dataframe(styled, use_container_width=True, hide_index=True)
 
     # Stats

@@ -18,6 +18,10 @@ def render(snapshot: dict) -> None:
     detections: List[dict] = snapshot.get("detections", [])
     tracks:     List[dict] = snapshot.get("tracks", [])
 
+    if not detections and not tracks:
+        st.info("No detection or tracking data yet.")
+        return
+
     c1, c2, c3 = st.columns(3)
     c1.metric("Detections (frame)", len(detections))
     c2.metric("Active tracks",      len(tracks))
@@ -31,18 +35,21 @@ def render(snapshot: dict) -> None:
         c3.metric("Classes", len(class_counts))
         rows = [{"Class": k, "Count": v} for k, v in class_counts.items()]
         df   = pd.DataFrame(rows)
-        try:
-            import plotly.express as px
-            fig = px.pie(df, names="Class", values="Count",
-                         title="Track class distribution")
-            fig.update_layout(
-                height=250,
-                margin=dict(l=20, r=20, t=40, b=20),
-                paper_bgcolor="rgba(0,0,0,0)",
-            )
-            st.plotly_chart(fig, use_container_width=True)
-        except ImportError:
-            st.bar_chart(df.set_index("Class"))
+        if not df.empty:
+            try:
+                import plotly.express as px
+                fig = px.pie(df, names="Class", values="Count",
+                             title="Track class distribution")
+                fig.update_layout(
+                    height=250,
+                    margin=dict(l=20, r=20, t=40, b=20),
+                    paper_bgcolor="rgba(0,0,0,0)",
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            except ImportError:
+                st.bar_chart(df.set_index("Class"))
+    else:
+        c3.metric("Classes", 0)
 
     st.divider()
 

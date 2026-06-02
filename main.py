@@ -140,20 +140,23 @@ def annotate_frame(
         x1, y1, x2, y2 = (int(v) for v in track.bbox_xyxy)
         dec    = dec_by_track.get(tid, {})
         action = dec.get("action", "MONITOR")
-        conf   = dec.get("confidence", 0.0)
+        agent_conf = dec.get("confidence", 0.0)
         col    = DECISION_COLORS_BGR.get(action, (0, 200, 0))
 
         cv2.rectangle(out, (x1, y1), (x2, y2), col, 2)
 
-        # Label: Track ID | Class | Decision
+        # Label line 1: #TID CLASS | DECISION
         class_name = track.class_name if track.class_name else "unknown"
-        label = f"#{tid} {class_name.upper()} | {action}"
-        cv2.putText(out, label, (x1, y1 - 20),
+        label_top = f"#{tid} {class_name.upper()} | {action}"
+        cv2.putText(out, label_top, (x1, y1 - 24),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.45, col, 1)
 
-        # Confidence score below
-        cv2.putText(out, f"conf={conf:.2f}", (x1, y2 + 14),
+        # Label line 2: det=TRACK_CONF agent=AGENT_CONF
+        det_conf = track.confidence
+        label_conf = f"det={det_conf:.2f} agent={agent_conf:.2f}"
+        cv2.putText(out, label_conf, (x1, y1 - 6),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.35, col, 1)
+
         if track.center:
             cv2.circle(out, (int(track.center[0]), int(track.center[1])), 3, col, -1)
 

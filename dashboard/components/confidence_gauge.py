@@ -19,6 +19,10 @@ def render(snapshot: dict) -> None:
         st.info("No agent decisions available.")
         return
 
+    if not isinstance(decisions, list):
+        st.error("Invalid agent_decisions format (expected list)")
+        return
+
     # Non-MONITOR decisions are most interesting
     non_monitor = [d for d in decisions if d.get("action", "MONITOR") != "MONITOR"]
     all_dec      = non_monitor if non_monitor else decisions
