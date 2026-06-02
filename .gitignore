@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Datasets (too large for Git)
+datasets/uavdt/raw/
+datasets/highd/data/
+datasets/ngsim/data/
+*.mp4
+*.avi
+*.mkv
+
+# Model weights (download separately)
+models/yolov8*.pt
+models/deepsort/
+
+# Outputs
+outputs/tracks/
+outputs/videos/
+outputs/logs/*.log
+
+# Temp files
+*.tmp
+*.cache
+.pytest_cache/
